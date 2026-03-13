@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
@@ -11,8 +10,8 @@
     <meta name="apple-mobile-web-app-title" content="Viewer" />
     <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
     <meta name="format-detection" content="telephone=no" />
-    <meta name="theme-color" content="#f4f4f4" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#282828" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f9f9f9" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#2f2f2f" media="(prefers-color-scheme: dark)" />
     <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -20,91 +19,82 @@
 <h1>Reddit Viewer</h1>
 
 <!-- Color mode -->
-
 <div class="mode-selector">
-    <input type="radio" id="mode-light"     name="colorMode" value="light"      checked />
+    <input type="radio" id="mode-light" name="colorMode" value="light" checked />
     <label for="mode-light">Light</label>
-    <input type="radio" id="mode-darkgray"  name="colorMode" value="dark-gray"  />
+    <input type="radio" id="mode-darkgray" name="colorMode" value="dark-gray" />
     <label for="mode-darkgray">Dark Gray</label>
     <input type="radio" id="mode-trueblack" name="colorMode" value="true-black" />
     <label for="mode-trueblack">True Black</label>
 </div>
 
 <!-- Controls -->
-
 <div class="controls">
 
-```
-<!-- File loader -->
-<div class="file-loader">
-    <div id="dropZone" class="drop-zone">
-        <div class="drop-zone-text">📂 Drop NDJSON files here or <span class="drop-zone-link">browse</span></div>
-        <div class="drop-zone-hint">Load posts + comments files together</div>
-        <input type="file" id="fileInput" accept=".ndjson,.jsonl,.json,.txt" multiple />
+    <!-- Multi-file loader -->
+    <div class="file-loader">
+        <div id="dropZone" class="drop-zone">
+            <div class="drop-zone-text">📂 Drop NDJSON files here or <span class="drop-zone-link">browse</span></div>
+            <div class="drop-zone-hint">You can load posts + comments files together</div>
+            <input type="file" id="fileInput" accept=".ndjson,.jsonl,.json,.txt" multiple />
+        </div>
+        <div id="fileList" class="file-list"></div>
+        <button id="loadButton" disabled>Load Files</button>
+        <div id="loadStatus" class="load-status"></div>
     </div>
-    <div id="fileList" class="file-list"></div>
-    <button id="loadButton" disabled>Load Files</button>
-    <div id="loadStatus" class="load-status"></div>
-</div>
 
-<!-- Type / saved filters -->
-<div class="filter-row">
-    <label class="toggle"><input type="checkbox" id="showTextPosts" checked /> Text Posts</label>
-    <label class="toggle"><input type="checkbox" id="showLinkPosts" checked /> Link Posts</label>
-    <label class="toggle"><input type="checkbox" id="showComments"  checked /> Show Comments</label>
-    <label class="toggle"><input type="checkbox" id="showSavedOnly"          /> Saved Only</label>
-</div>
+    <div class="filter-row">
+        <label class="toggle"><input type="checkbox" id="showTextPosts" checked /> Text Posts</label>
+        <label class="toggle"><input type="checkbox" id="showLinkPosts" checked /> Link Posts</label>
+        <label class="toggle"><input type="checkbox" id="showComments" checked /> Comments</label>
+        <label class="toggle"><input type="checkbox" id="showSavedOnly" /> Saved Only</label>
+    </div>
 
-<!-- Sort / font / search -->
-<div class="filter-row">
-    <label class="toggle">
-        Sort:
-        <select id="sortBy">
-            <option value="none">None</option>
-            <option value="textLength">Text Length</option>
-            <option value="scoreAsc">Score ↑</option>
-            <option value="scoreDesc">Score ↓</option>
-            <option value="dateAsc">Date ↑</option>
-            <option value="dateDesc">Date ↓</option>
-        </select>
-    </label>
-    <label class="toggle">
-        Font:
-        <select id="fontSizeSelect">
-            <option value="14px">14px</option>
-            <option value="16px" selected>16px</option>
-            <option value="18px">18px</option>
-            <option value="20px">20px</option>
-            <option value="22px">22px</option>
-        </select>
-    </label>
-    <label class="toggle">
-        Spacing:
-        <select id="lineHeightSelect">
-            <option value="1.2">1.2</option>
-            <option value="1.5" selected>1.5</option>
-            <option value="1.8">1.8</option>
-            <option value="2">2.0</option>
-        </select>
-    </label>
-    <input type="text" id="searchInput" placeholder="Search title, content, author…" />
-</div>
+    <div class="filter-row">
+        <label class="toggle">
+            Sort:
+            <select id="sortBy">
+                <option value="none">None</option>
+                <option value="textLength">Text Length</option>
+                <option value="scoreAsc">Score ↑</option>
+                <option value="scoreDesc">Score ↓</option>
+                <option value="dateAsc">Date ↑</option>
+                <option value="dateDesc">Date ↓</option>
+            </select>
+        </label>
+        <label class="toggle">
+            Font:
+            <select id="fontSizeSelect">
+                <option value="14px">14px</option>
+                <option value="16px" selected>16px</option>
+                <option value="18px">18px</option>
+                <option value="20px">20px</option>
+                <option value="22px">22px</option>
+            </select>
+        </label>
+        <label class="toggle">
+            Spacing:
+            <select id="lineHeightSelect">
+                <option value="1.2">1.2</option>
+                <option value="1.5" selected>1.5</option>
+                <option value="1.8">1.8</option>
+                <option value="2">2.0</option>
+            </select>
+        </label>
+        <input type="text" id="searchInput" placeholder="Search title, content, author…" />
+    </div>
 
-<!-- Active author filter bar (hidden until an author is clicked) -->
-<div id="authorFilterBar" class="author-filter-bar" style="display:none">
-    Filtering by author: <strong id="authorFilterName"></strong>
-    <button id="clearAuthorFilter">✕ Clear</button>
-</div>
-```
+    <div id="authorFilterBar" class="author-filter-bar" style="display:none">
+        Filtering by author: <strong id="authorFilterName"></strong>
+        <button id="clearAuthorFilter">✕ Clear</button>
+    </div>
 
 </div>
 
 <!-- Post count -->
-
 <div id="postCount"></div>
 
-<!-- Main content wrapper -->
-
+<!-- Wrapper -->
 <div id="wrapper">
     <div id="content"></div>
     <div class="pagination">
@@ -115,6 +105,5 @@
 </div>
 
 <script src="app.js"></script>
-
 </body>
 </html>
